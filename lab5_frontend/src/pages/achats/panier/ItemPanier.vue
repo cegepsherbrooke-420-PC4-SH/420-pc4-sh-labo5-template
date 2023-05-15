@@ -45,7 +45,16 @@ export default {
                 this.currQuantity = 1;
             }
 
-            this.cart.changeQuantity(this.product.id, this.currQuantity);
+            // Arrondit toute quantité à l'unité près (le champ de saisie permet d'entrer des nombres décimaux...)
+            this.currQuantity = Math.round(this.currQuantity);
+
+            // On empêche les appels inutiles à l'API si currQuantity est la même que la prop
+            // quantity ; le watch est déclenché lorsque la prop change, alors qu'il est inutile dans
+            // ce cas de refaire un appel à changeQuantity, car il ne s'agit pas d'une action de l'utilisateur
+            // qui est à l'origine.
+            if (this.currQuantity !== this.quantity) {
+                this.cart.changeQuantity(this.product.id, this.currQuantity);
+            }
         },
         // Ce watch permet de rafraîchir la quantité courante (celle qu'on voit
         // dans le champ <input>) lorsque la prop quantity change, ce qui sera le cas lorsque quelque
